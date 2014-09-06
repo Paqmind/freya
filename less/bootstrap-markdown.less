@@ -1,0 +1,37 @@
+/*******************************************************************************
+  BOOTSTRAP-MARKDOWN
+*******************************************************************************/
+
+.md-editor {
+    @padding: 10px;
+    > .md-header, .md-footer {
+        padding: @padding;
+    }
+    > .md-header {
+        margin: 0;
+        background: @panel-default-heading-bg;
+        border: 1px solid @panel-default-border;
+        > .btn-group:first-child {
+            margin-left: 0;
+        }
+        .btn.active {
+            .btn-blue;
+        }
+    }
+    > .md-footer {
+        background: @panel-footer-bg;
+    }
+
+    > .md-preview {
+        padding: @padding;
+        border: none;
+    }
+    > textarea {
+        padding: @padding;
+        border: none;
+        background: @panel-bg;
+    }
+    &.active {
+        .box-shadow(@input-box-shadow);
+    }
+}

@@ -1,0 +1,80 @@
+/*******************************************************************************
+  PRETTY-PHOTO
+*******************************************************************************/
+
+.pp_freya {
+    .pp_fade {
+        position: relative;
+    }
+    .pp_content{
+        background: transparent!important;
+    }
+    .pp_content_container {
+        ul {
+            li {
+                a {
+                    border: none;
+                    background: none;
+                    img {
+                        box-shadow:  0 0 0 1px #112008;
+                    }
+                }
+            }
+        }
+    }
+    .icon {
+        height: 40px;
+        width: 40px;
+        z-index: 10000;
+        background: rgba(0, 0, 0, 0.2);
+        .transition(@transition-base);
+        border: 1px solid #fff;
+        color: #fff;
+        line-height: 38px;
+        text-indent: 0;
+        text-align: center;
+        &:hover {
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+        }
+    }
+    .pp_next, .pp_previous,
+    .pp_arrow_previous, .pp_arrow_next {
+        position: relative;
+        background: none!important;
+        &:hover {
+            background: none!important;
+        }
+        .icon {
+            position: absolute;
+            height: 40px;
+        }
+    }
+    .pp_next           { .icon { top: 50%; right: 20px; } }
+    .pp_previous       { .icon { top: 50%; left: 20px; } }
+    .pp_arrow_next     { .icon { top: 0;   right: -20px; } }
+    .pp_arrow_previous { .icon { top: 0;   left: -20px; } }
+    .pp_close {
+         position: absolute;
+         background: none!important;
+         top: 20px;
+         right: 20px;
+         width: 40px!important;
+         height: 40px!important;
+         z-index: 2001;
+        .icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 0.82em;
+        }
+    }
+    .pp_gallery {
+        ul {
+            margin: 0;
+            li:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}

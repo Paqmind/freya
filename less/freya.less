@@ -1,0 +1,71 @@
+/*******************************************************************************
+  FREYA
+*******************************************************************************/
+
+/*
+Table model-index
+*/
+table.model-index {
+    input.toggle-master, input.toggle-slave {
+        margin-right: 5px;
+        margin-left: 5px;
+    }
+}
+
+/*
+Filters-form
+*/
+.filters-form:extend(.form-horizontal-auto all) {
+    margin-bottom: @line-height-computed;
+    > .form-group {
+        margin-bottom: 10px;
+        > .controls {
+            > .form-inline {
+                > .form-group {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
+
+/*
+Sort-form
+*/
+.sorts-form:extend(.form-horizontal-auto all) {
+    min-width: 200px;
+    > .form-group {
+        margin-bottom: 10px;
+        > .control-label {
+            width: 60px;
+        }
+        > .controls {
+            margin-left: 60px + @line-height-computed;
+            > .form-inline {
+                > .form-group {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+}
+.sorts-form-lg:extend(.sorts-form all) {
+    min-width: 250px;
+    > .form-group {
+        > .control-label {
+            width: 90px;
+        }
+        > .controls {
+            margin-left: 90px + @line-height-computed;
+        }
+    }
+}
+
+/*
+Antispam protection
+    HTML contains reversed email address which turns right with CSS
+*/
+.obfuscated {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
