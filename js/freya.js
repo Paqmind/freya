@@ -60,11 +60,8 @@ $.fn.textHolder = function () {
         var $this = $(this);
         if ($this.closest('.notext-holder').length) return;
         var fontSize = parseInt($this.css('font-size')); // result will always in pixels
-        var width = parseInt($this.css('width')); // result will always in pixels
         var maxwidth = 75 * (fontSize / 2.1);
-        if (width > maxwidth) {
-            $this.css('max-width', maxwidth);
-        }
+        $this.css('max-width', maxwidth);
     });
     return this;
 };
