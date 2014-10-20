@@ -63,7 +63,7 @@ $.fn.textHolder = function () {
         var width = parseInt($this.css('width')); // result will always in pixels
         var maxwidth = 75 * (fontSize / 2.1);
         if (width > maxwidth) {
-            $this.width(maxwidth);
+            $this.css('max-width', maxwidth);
         }
     });
     return this;
