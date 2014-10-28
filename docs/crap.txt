@@ -1,0 +1,9 @@
+// TABLE-FIXED-HEADER (should be before MODEL: MASTER TOGGLE)
+/*(function () {
+    var $fixedHeaderTable = $('.table-fixed-header');
+    if ($fixedHeaderTable.length) {
+        $fixedHeaderTable.fixedHeader({
+            topOffset: window.topOffset
+        });
+    }
+})();*/
