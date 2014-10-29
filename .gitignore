@@ -1,2 +1,3 @@
-# FILES BY MASK ----------------------------------------------------------------
+# OS or Editor folders
 .DS_Store
+.idea
