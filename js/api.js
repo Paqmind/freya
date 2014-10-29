@@ -37,4 +37,19 @@ $(function () {
       handle();
     }
   });
+
+  // ERROR HANDLERS
+  $(document).ajaxError(function (event, jqXHR, ajaxSettings, thrownError) {
+    // Possible values for thrownError argument are "timeout", "error", "abort", and "parsererror".
+    // When an HTTP error occurs, errorThrown receives the textual portion of the HTTP status
+    var message = ajaxSettings.url + ": ";
+    if (thrownError == 'parsererror')   message += "Parsing request was failed.";
+    else if (thrownError == 'timeout')  message += "Request time out.";
+    else if (thrownError == 'abort')    message += "Request was aborted.";
+    else if (jqXHR.status === 0)        message += "No connection.";
+    else if (jqXHR.status)              message += "HTTP Error " + jqXHR.status + " – " + jqXHR.statusText + ".";
+    else                                message += "Unknown error.";
+    alert(message);
+  });
+
 });
