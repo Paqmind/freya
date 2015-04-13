@@ -34,7 +34,7 @@ Freya.cleanWordHtml = function(input) {
     // 3. remove &nbsp;
     var output = output.replace(/&nbsp;/gi, '');
     return output;
-}
+};
 
 Freya.removeAttributes = function (value) {
     var content = $('<article/>').html(value);
@@ -42,7 +42,7 @@ Freya.removeAttributes = function (value) {
         $(this).removeAttributes();
     });
     return $(content)[0].outerHTML;
-}
+};
 
 jQuery.fn.removeAttributes = function() {
     return this.each(function() {
@@ -56,46 +56,66 @@ jQuery.fn.removeAttributes = function() {
             }
         });
     });
-}
+};
 
 // Left only valid tags in the string
-Freya.sanitize_html = function(value, valid_tags) {
+Freya.sanitize_html = function(value, allowedTags) {
     value = Freya.cleanWordHtml(value);
-    value =  Freya.removeAttributes(value);
-    valid_tags.join('')
-            .toLowerCase()
-            .match(/<[a-z][a-z0-9]*>/g);
+    value = Freya.removeAttributes(value);
+    if (allowedTags.indexOf("br")) {
+      allowedTags.push("br /");
+      allowedTags.push("br/");
+    }
     var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
     return value.replace(tags, function($0, $1) {
-        return valid_tags.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
+        return allowedTags.indexOf($1.toLowerCase()) > -1 ? $0 : '';
     });
-}
-//// Tests for sanitize_html
-//var str;
-//valid_tags = ['<em>', '<p>', '<ul>', '<ol>', '<li>', '<br />', '<br/>', '<a>', '<span>', '<div>', '<strong>']
-//str = '<p>This text should be valid. ' +
-//              'Let\'s have <em>em</em>, <strong><strong></strong>,' +
-//              'and br here ->> <br/> <<-</p>';
-//console.log(Freya.sanitize_html(str, valid_tags));
-//if (sanitize_html(str, valid_tags) == str) console.log('pass')
+};
+
+// Tests for sanitize_html
+//var str, newstr;
+//var allowedTags = ['em', 'p', 'ul', 'ol', 'li', 'br', 'a', 'span', 'div', 'strong'];
+//
+//str = 'Valid tags: <em>em</em>, <p>p</p>, <ul><li></li></ul> <ol><li></li></ol> ' +
+//      '<span>span</span> <div>div</div> <strong>strong</strong> ';
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('new:', newstr);
+//if (newstr == str) console.log('pass');
 //else console.log('error');
 //
-//str = 'Lists test: <ul><li>aa</li><li>bb</li></ul> <ol><li>aa</li><li>bb</li></ol>';
-//console.log(sanitize_html(str, valid_tags));
-//if (sanitize_html(str, valid_tags) == str) console.log('pass')
+//str = '<br> <br/> <br />';
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('new:', newstr);
+//if (newstr == '<br> <br> <br>') console.log('pass');
 //else console.log('error');
 //
 //str = 'Test links: Here is <a href="http://google.com">the link</a>';
-//console.log(sanitize_html(str, valid_tags));
-//if (sanitize_html(str, valid_tags) == str) console.log('pass')
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('new:', newstr);
+//if (newstr == str) console.log('pass');
+//else console.log('error');
+//
+//str = 'Test links with attr: Here is <a href="http://google.com" style="color:red">the link</a>';
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('new:', newstr);
+//if (newstr != str) console.log('pass');
 //else console.log('error');
 //
 //str = 'Images are not valid: <img src="https://www.site.com/logo.png">';
-//console.log(sanitize_html(str, valid_tags));
-//if (sanitize_html(str, valid_tags) != str) console.log('pass')
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('new:', newstr);
+//if (newstr != str) console.log('pass');
 //else console.log('error');
 //
-//str = 'As well as js scripts: <script>alert(\'test\');</script>';
-//console.log(sanitize_html(str, valid_tags));
-//if (sanitize_html(str, valid_tags) != str) console.log('pass')
+//str = 'As well as js scripts and frames: <script>alert(\'test\');</script> <iframe>iframe</iframe>';
+//newstr = Freya.sanitize_html(str, allowedTags);
+//console.log('str:', str);
+//console.log('newstr:', newstr);
+//newstr = Freya.sanitize_html(str, allowedTags);
+//if (newstr != str) console.log('pass');
 //else console.log('error');
