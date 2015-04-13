@@ -38,26 +38,31 @@ $(function () {
                 }
             }
 
-            // Ability to replace any block on the page with any block from returned html
-            var $wrapper = $('body');
-            if ($initiator) {
-                if ($initiator.data('wrapper')) {
-                    $wrapper = $initiator.data('wrapper');
-                } else if ($initiator.is('form')) {
-                    $wrapper = $initiator.closest('form');
-                    $wrapper.context = document;
-                } else if ($initiator.is('button')) {
-                    $wrapper =  $initiator.closest('.model-item');
-                }
-            } else if (data.settings && data.settings['wrapper']) {
-                $wrapper = $(data.settings['wrapper']);
-            }
-
+            // new wrapper can be the same as current, or be insede, or be outside
             if (data.data_html || data.data_html === '') {
-                $wrapper.html(data.data_html);
+                var wrapper, $wrapper;
+                var $newData = $(data.data_html);
+                if ($initiator) {
+                    if ($initiator.data('wrapper')) {
+                        $wrapper = $initiator.closest($initiator.data('wrapper'));
+                        if ($initiator.data('wrapper') == '.modal-content') {
+                           $newData = $newData.find('.modal-content');
+                        }
+                    } else if ($initiator.is('form')) {
+                        $wrapper = $initiator.closest('form');
+                    } else if ($initiator.is('button')) {
+                        $wrapper = $initiator.closest('.model-item');
+                    }
+                } else if (data.settings && data.settings['wrapper']) {
+                    $wrapper = $(data.settings['wrapper']);
+                }
+                if ($wrapper.length) {
+                    $wrapper = $newData.replaceAll($wrapper);
+                    window.rebind($wrapper, data.settings);
+                }
+            } else if (data.settings) {
+                window.rebind($('body'), data.settings);
             }
-
-            window.rebind($wrapper, data.settings);
 
             if (data.flash_html) {
                 $alerts.html(data.flash_html);
