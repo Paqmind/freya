@@ -29,23 +29,6 @@ $(function () {
 
     var done_handler = function (data, textStatus, jqXHR, $initiator) {
 
-        // Ability to replace any block on the page with any block from returned html
-        var wrapper = null;
-        if ($initiator) {
-            if ($initiator.data('wrapper')) {
-                wrapper = $initiator.data('wrapper');
-            } else if ($initiator.is('form')) {
-                wrapper = 'form';
-            } else if ($initiator.is('button')) {
-                wrapper = '.model-item';
-            }
-        } else if (data.settings && data.settings['wrapper']) {
-            wrapper = data.settings['wrapper'];
-        }
-        else {
-            wrapper = 'body';
-        }
-
         if (data) {
             if (data.redirect_url) {
                 if (data.redirect_url == document.URL) {
@@ -54,22 +37,32 @@ $(function () {
                     window.location.href = data.redirect_url;
                 }
             }
-            if ((data.data_html || data.data_html === '') && wrapper) {
-                var newData = $(data.data_html).find(wrapper).andSelf();
-                if ($initiator) {
-                    $initiator.closest(wrapper).replaceWith(newData);
-                    window.rebind($initiator.closest(wrapper));
-                } else {
-                    $(wrapper).replaceWith(newData);
-                    window.rebind($(wrapper));
+
+            // Ability to replace any block on the page with any block from returned html
+            var $wrapper = $('body');
+            if ($initiator) {
+                if ($initiator.data('wrapper')) {
+                    $wrapper = $initiator.data('wrapper');
+                } else if ($initiator.is('form')) {
+                    $wrapper = $initiator.closest('form');
+                    $wrapper.context = document;
+                } else if ($initiator.is('button')) {
+                    $wrapper =  $initiator.closest('.model-item');
                 }
+            } else if (data.settings && data.settings['wrapper']) {
+                $wrapper = $(data.settings['wrapper']);
             }
+
+            if (data.data_html || data.data_html === '') {
+                $wrapper.html(data.data_html);
+            }
+
+            window.rebind($wrapper, data.settings);
+
             if (data.flash_html) {
                 $alerts.html(data.flash_html);
             }
-            if (data.settings) {
-                window.rebind(wrapper, data.settings);
-            }
+
         } else {
             console.log('Data from ajax request is empty')
         }
