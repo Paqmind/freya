@@ -1,0 +1,6 @@
+{
+  "data": {
+    "alerts": "Popup is added",
+    "html": "<div class=\"modal\"><div class=\"modal-body\">New html code here</div></div>"
+  }
+}

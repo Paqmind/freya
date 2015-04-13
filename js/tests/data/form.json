@@ -1,0 +1,6 @@
+{
+  "data": {
+    "alerts": "Form is updated",
+    "html": "<form action=\"api/form.json\" method=\"GET\"><p>Error description</p><input type=\"text\" class=\"error\"/><button data-ajax=\"freya\" data-endpoint=\"api/data.json\">Click me</button></form>"
+  }
+}
