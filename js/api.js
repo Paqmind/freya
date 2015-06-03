@@ -142,6 +142,9 @@ $(function () {
         var $form = $(this).closest('form[data-api="ajax.update"]');
         var formData = $form.serializeArray();
 
+        //To prevent multisending
+        $(this).prop('disabled', true);
+
         formData.push({ name: this.name, value: this.value });
         formData.push({ name: 'next', value: document.URL });
         $.ajax({
@@ -151,6 +154,7 @@ $(function () {
         })
         .done(function (data, textStatus, jqXHR) {
             done_handler(data, textStatus, jqXHR, $form);
+            $(this).prop('disabled', false);
         });
     });
 
@@ -166,10 +170,14 @@ $(function () {
     $(document.body).on('click', '.modal[data-api="ajax.popup"] form [type="submit"]', function (event) {
         event.preventDefault();
 
+        //To prevent multisending
         var $button = $(this);
+        $button.prop('disabled', true);
+
         var $form = $button.closest('form');
         var $popup = $form.closest('.modal[data-api="ajax.popup"]');
         var confirm = Boolean(Number($button.attr('confirm')));
+
 
         var url = $form.attr('action');
         var formData = $form.serializeArray();
@@ -200,6 +208,7 @@ $(function () {
                     }
                 }
             }
+            $button.prop('disabled', false);
         });
     });
 });
