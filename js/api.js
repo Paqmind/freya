@@ -154,6 +154,8 @@ $(function () {
         })
         .done(function (data, textStatus, jqXHR) {
             done_handler(data, textStatus, jqXHR, $form);
+        })
+        .always(function () {
             $(this).prop('disabled', false);
         });
     });
@@ -208,7 +210,9 @@ $(function () {
                     }
                 }
             }
-            $button.prop('disabled', false);
+        })
+        .always(function () {
+          $button.prop('disabled', false);
         });
     });
 });
