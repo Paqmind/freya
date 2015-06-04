@@ -2,7 +2,7 @@
 
 var Freya = Freya || {};
 
-Freya.get_popup = function (url) {
+Freya.get_popup = function (url, $button) {
 
     // Ability to load popup via ajax url
     $.get(url).done(function (data, textStatus, jqXHR) {
@@ -19,6 +19,11 @@ Freya.get_popup = function (url) {
             } else if (data.flash_html === '') {
                 $alerts.html('');
             }
+        }
+    })
+    .always(function () {
+        if ($button !== undefined ) {
+            $button.prop('disabled', false);
         }
     });
 };
@@ -80,6 +85,9 @@ $(function () {
         var url = $button.attr('action');
         var confirm = $button.attr('data-confirm');
 
+        //To prevent multisending
+        $button.prop('disabled', true);
+
         function handle() {
             $.ajax({
                 type: 'get',
@@ -88,6 +96,9 @@ $(function () {
             })
             .done(function (data, textStatus, jqXHR) {
                 done_handler(data, textStatus, jqXHR, $button);
+            })
+            .always(function () {
+              $button.prop('disabled', false);
             });
         }
 
@@ -109,6 +120,9 @@ $(function () {
         var url = $button.attr('action');
         var confirm = $button.attr('data-confirm');
 
+        //To prevent multisending
+        $button.prop('disabled', true);
+
         function handle() {
             if (csrftoken) {
                 var setting = { beforeSend: function (xhr) {
@@ -122,6 +136,9 @@ $(function () {
             }))
             .done(function (data, textStatus, jqXHR) {
                 done_handler(data, textStatus, jqXHR, $button);
+            })
+            .always(function () {
+              $button.prop('disabled', false);
             });
         }
 
@@ -165,7 +182,11 @@ $(function () {
         event.preventDefault();
         var $button = $(this);
         var url = $button.attr('action');
-        Freya.get_popup(url);
+
+        //To prevent multisending
+        $button.prop('disabled', true);
+
+        Freya.get_popup(url, $button);
     });
 
     // POPUP - FORM
