@@ -121,7 +121,9 @@ $(function () {
         var confirm = $button.attr('data-confirm');
 
         //To prevent multisending
-        $button.prop('disabled', true);
+        if (!confirm) {
+            $button.prop('disabled', true);
+        }
 
         function handle() {
             if (csrftoken) {
