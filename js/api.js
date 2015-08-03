@@ -50,8 +50,12 @@ $(function () {
                 if ($initiator) {
                     if ($initiator.data('wrapper')) {
                         $wrapper = $initiator.closest($initiator.data('wrapper'));
-                        if ($initiator.data('wrapper') == '.modal-content') {
-                           $newData = $newData.find('.modal-content');
+                        if ($wrapper.length) {
+                            if ($initiator.data('wrapper') == '.modal-content') {
+                                $newData = $newData.find('.modal-content');
+                            }
+                        } else {
+                            $wrapper = $($initiator.data("wrapper"));
                         }
                     } else if ($initiator.is('form')) {
                         $wrapper = $initiator.closest('form');
@@ -113,6 +117,39 @@ $(function () {
         }
     });
 
+    // API for FORM that updates content on page by changing any field
+    $(document.body).on('change', 'form[data-api="ajax.autoreload"] :input', function (event) {
+        event.preventDefault();
+        var $form = $(this).closest('form');
+        var $submit = $form.find('input[type="submit"]');
+
+        // To prevent multisending
+        $submit.prop('disabled', true);
+
+        // Update URL if form.method == GET
+        if ($form.attr('method') == 'GET') {
+            var url = $form.attr('action');
+            var path = url.indexOf("?") >=0 ? url + '&' + $form.serialize() : url + '?' + $form.serialize();
+            window.history.pushState({}, $(document).find("title").text(), path);
+        }
+
+        function handle() {
+            $.ajax({
+                type: $form.attr('method'),
+                url: $form.data('api-action') || $form.attr('action'),
+                data: $form.serializeArray(),
+            })
+            .done(function (data, textStatus, jqXHR) {
+                done_handler(data, textStatus, jqXHR, $form);
+            })
+            .always(function () {
+              $submit.prop('disabled', false);
+            });
+        }
+
+        handle();
+    });
+
     // API for BUTTON that updates model on page (card usual)
     $(document.body).on('click', 'button[data-api="ajax.update"]', function (event) {
         event.preventDefault();
@@ -161,7 +198,7 @@ $(function () {
         var $form = $(this).closest('form[data-api="ajax.update"]');
         var formData = $form.serializeArray();
 
-        //To prevent multisending
+        // To prevent multisending
         $(this).prop('disabled', true);
 
         formData.push({ name: this.name, value: this.value });
@@ -185,7 +222,7 @@ $(function () {
         var $button = $(this);
         var url = $button.attr('action');
 
-        //To prevent multisending
+        // To prevent multisending
         $button.prop('disabled', true);
 
         Freya.get_popup(url, $button);
