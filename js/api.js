@@ -130,14 +130,18 @@ $(function () {
         if ($form.attr('method') == 'GET') {
             var url = $form.attr('action');
             var path = url.indexOf("?") >=0 ? url + '&' + $form.serialize() : url + '?' + $form.serialize();
+            path += "&" + $submit.attr("name") + "=" + $submit.val();
             window.history.pushState({}, $(document).find("title").text(), path);
         }
+
+        var formData = $form.serializeArray();
+        formData.push({ name: $submit.attr("name"), value: $submit.val() });
 
         function handle() {
             $.ajax({
                 type: $form.attr('method'),
                 url: $form.data('api-action') || $form.attr('action'),
-                data: $form.serializeArray(),
+                data: formData,
             })
             .done(function (data, textStatus, jqXHR) {
                 done_handler(data, textStatus, jqXHR, $form);
