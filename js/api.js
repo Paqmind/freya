@@ -167,9 +167,9 @@ $(function () {
         }
 
         function handle() {
-            if (csrftoken) {
+            if (LocalStorage.get('conf.csrfToken')) {
                 var setting = { beforeSend: function (xhr) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                    xhr.setRequestHeader("X-CSRFToken", LocalStorage.get('conf.csrfToken'))
                 }}
             }
             $.ajax($.extend(setting, {
