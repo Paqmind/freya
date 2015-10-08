@@ -72,6 +72,18 @@ Freya.sanitize_html = function(value, allowedTags) {
     });
 };
 
+Freya.addSpinner = function($btn) {
+    $btn.prop("disabled", true);
+    var currentHTML = $btn.html();
+    $btn.html('<span class="icon-spinner animate-spin"></span>');
+    return currentHTML;
+};
+
+Freya.removeSpinner = function($btn, previousHTML) {
+    $btn.prop("disabled", false);
+    $btn.html(previousHTML);
+};
+
 // Tests for sanitize_html
 //var str, newstr;
 //var allowedTags = ['em', 'p', 'ul', 'ol', 'li', 'br', 'a', 'span', 'div', 'strong'];
