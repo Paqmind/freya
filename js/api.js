@@ -255,9 +255,7 @@ $(function () {
         var url = $form.attr('action');
 
         //To prevent multisending
-        if (!confirm) {
-            $button.prop('disabled', true);
-        }
+        $button.prop('disabled', true);
 
         function handle() {
             if (LocalStorage.get('conf.csrfToken')) {
@@ -283,6 +281,7 @@ $(function () {
                         $popup.modal('hide');
                         done_handler(data, textStatus, jqXHR, null);
                     } else {
+                        window.location.href = data.redirect_url;
                         if (data.data_html) {
                             // To make update quicker and to not reinit popup
                             $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
