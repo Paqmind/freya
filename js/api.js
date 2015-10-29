@@ -251,7 +251,7 @@ $(function () {
         var $button = $(this);
         var $form = $button.closest('form');
         var $popup = $form.closest('.modal[data-api="ajax.popup"]');
-        var confirm = $button.attr('confirm');
+        var confirm = $button.attr('data-confirm');
         var url = $form.attr('action');
 
         //To prevent multisending
