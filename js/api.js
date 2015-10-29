@@ -248,47 +248,66 @@ $(function () {
     $(document.body).on('click', '.modal[data-api="ajax.popup"] form [type="submit"]', function (event) {
         event.preventDefault();
 
-        //To prevent multisending
         var $button = $(this);
-        $button.prop('disabled', true);
-
         var $form = $button.closest('form');
         var $popup = $form.closest('.modal[data-api="ajax.popup"]');
-        var confirm = Boolean(Number($button.attr('confirm')));
-
-
+        var confirm = $button.attr('data-confirm');
         var url = $form.attr('action');
-        var formData = $form.serializeArray();
-        formData.push({ name: this.name, value: this.value });
-        formData.push({ name: 'next', value: document.URL });
-        $.post(url, formData).done(function (data, textStatus, jqXHR) {
-            if (data) {
-                if (data.redirect_url) {
-                    if (data.redirect_url == document.URL) {
-                        location.reload();
+
+        //To prevent multisending
+        $button.prop('disabled', true);
+
+        function handle() {
+            if (LocalStorage.get('conf.csrfToken')) {
+                var setting = { beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", LocalStorage.get('conf.csrfToken'))
+                }}
+            }
+
+            var formData = $form.serializeArray();
+            formData.push({ name: this.name, value: this.value });
+            formData.push({ name: 'next', value: document.URL });
+
+            $.post(url, formData).done(function (data, textStatus, jqXHR) {
+                if (data) {
+                    if (data.redirect_url) {
+                        if (data.redirect_url == document.URL) {
+                            location.reload();
+                        } else {
+                            window.location.href = data.redirect_url;
+                        }
+                    }
+                    if (data.settings && data.settings['closePopup']) {
+                        $popup.modal('hide');
+                        done_handler(data, textStatus, jqXHR, null);
                     } else {
                         window.location.href = data.redirect_url;
+                        if (data.data_html) {
+                            // To make update quicker and to not reinit popup
+                            $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
+                            window.rebind($popup);
+                        }
+                        if (data.flash_html) {
+                            $alerts.append(data.flash_html);
+                        } else if (data.flash_html === '') {
+                            $alerts.html('');
+                        }
                     }
                 }
-                if (data.settings && data.settings['closePopup']) {
-                    $popup.modal('hide');
-                    done_handler(data, textStatus, jqXHR, null);
-                } else {
-                    if (data.data_html) {
-                        // To make update quicker and to not reinit popup
-                        $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
-                        window.rebind($popup);
-                    }
-                    if (data.flash_html) {
-                        $alerts.append(data.flash_html);
-                    } else if (data.flash_html === '') {
-                        $alerts.html('');
-                    }
+            })
+            .always(function () {
+              $button.prop('disabled', false);
+            });
+        }
+
+        if (confirm) {
+            bootbox.confirm(confirm, function (result) {
+                if (result) {
+                    handle();
                 }
-            }
-        })
-        .always(function () {
-          $button.prop('disabled', false);
-        });
+            });
+        } else {
+            handle();
+        }
     });
 });
