@@ -278,7 +278,6 @@ $(function () {
                         }
                     }
                     if (data.settings && data.settings['closePopup']) {
-                        $popup.modal('hide');
                         done_handler(data, textStatus, jqXHR, null);
                     } else {
                         window.location.href = data.redirect_url;
@@ -301,9 +300,12 @@ $(function () {
         }
 
         if (confirm) {
+            $popup.modal('hide');
             bootbox.confirm(confirm, function (result) {
                 if (result) {
                     handle();
+                } else {
+                    $button.prop('disabled', false);
                 }
             });
         } else {
