@@ -280,7 +280,6 @@ $(function () {
                     if (data.settings && data.settings['closePopup']) {
                         done_handler(data, textStatus, jqXHR, null);
                     } else {
-                        window.location.href = data.redirect_url;
                         if (data.data_html) {
                             // To make update quicker and to not reinit popup
                             $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
