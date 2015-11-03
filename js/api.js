@@ -2,7 +2,7 @@
 
 var Freya = Freya || {};
 
-Freya.get_popup = function (url, $button, currentButtonHtml) {
+Freya.get_popup = function (url, $button) {
 
     // Ability to load popup via ajax url
     $.get(url).done(function (data, textStatus, jqXHR) {
@@ -23,7 +23,7 @@ Freya.get_popup = function (url, $button, currentButtonHtml) {
     })
     .always(function () {
         if ($button !== undefined ) {
-            Freya.enableSubmitBtn($button, currentButtonHtml);
+            $button.prop('disabled', false);
         }
     });
 };
@@ -90,7 +90,7 @@ $(function () {
         var confirm = $button.attr('data-confirm');
 
         //To prevent multisending
-        var currentButtonHtml = Freya.disableSubmitBtn($button);
+        $button.prop('disabled', true);
 
         function handle() {
             $.ajax({
@@ -102,7 +102,7 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $button);
             })
             .always(function () {
-              Freya.enableSubmitBtn($button, currentButtonHtml);
+              $button.prop('disabled', false);
             });
         }
 
@@ -121,10 +121,10 @@ $(function () {
     $(document.body).on('change', 'form[data-api="ajax.autoreload"] :input', function (event) {
         event.preventDefault();
         var $form = $(this).closest('form');
-        var $submit = $form.find('button[type="submit"]');
+        var $submit = $form.find('input[type="submit"]');
 
         // To prevent multisending
-        var currentButtonHtml = Freya.disableSubmitBtn($submit);
+        $submit.prop('disabled', true);
 
         // Update URL if form.method == GET
         if ($form.attr('method') == 'GET') {
@@ -147,7 +147,7 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $form);
             })
             .always(function () {
-              Freya.enableSubmitBtn($submit, currentButtonHtml);
+              $submit.prop('disabled', false);
             });
         }
 
@@ -163,7 +163,7 @@ $(function () {
 
         //To prevent multisending
         if (!confirm) {
-            var currentButtonHtml = Freya.disableSubmitBtn($button);
+            $button.prop('disabled', true);
         }
 
         function handle() {
@@ -181,9 +181,7 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $button);
             })
             .always(function () {
-              if(!confirm) {
-                Freya.enableSubmitBtn($button, currentButtonHtml);
-              }
+              $button.prop('disabled', false);
             });
         }
 
@@ -199,14 +197,13 @@ $(function () {
     });
 
     // API for FORM that works by ajax
-    $(document.body).on('click', 'form[data-api="ajax.update"] button[type="submit"]', function (event) {
+    $(document.body).on('click', 'form[data-api="ajax.update"] input[type="submit"]', function (event) {
         event.preventDefault();
         var $form = $(this).closest('form[data-api="ajax.update"]');
         var formData = $form.serializeArray();
-        var $button = $(this);
 
         // To prevent multisending
-        var currentButtonHtml = Freya.disableSubmitBtn($button);
+        $(this).prop('disabled', true);
 
         formData.push({ name: this.name, value: this.value });
         formData.push({ name: 'next', value: document.URL });
@@ -219,7 +216,7 @@ $(function () {
             done_handler(data, textStatus, jqXHR, $form);
         })
         .always(function () {
-            Freya.enableSubmitBtn($button, currentButtonHtml);
+            $(this).prop('disabled', false);
         });
     });
 
@@ -230,8 +227,9 @@ $(function () {
         var url = $button.attr('action');
 
         // To prevent multisending
-        var currentButtonHtml = Freya.disableSubmitBtn($button);
-        Freya.get_popup(url, $button, currentButtonHtml);
+        $button.prop('disabled', true);
+
+        Freya.get_popup(url, $button);
     });
 
     // POPUP - FORM
@@ -240,7 +238,7 @@ $(function () {
 
         //To prevent multisending
         var $button = $(this);
-        var currentButtonHtml = Freya.disableSubmitBtn($button);
+        $button.prop('disabled', true);
 
         var $form = $button.closest('form');
         var $popup = $form.closest('.modal[data-api="ajax.popup"]');
@@ -278,7 +276,7 @@ $(function () {
             }
         })
         .always(function () {
-          Freya.enableSubmitBtn($button, currentButtonHtml);
+          $button.prop('disabled', false);
         });
     });
 });
