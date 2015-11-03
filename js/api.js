@@ -244,7 +244,7 @@ $(function () {
         // Close popup if needed
         if ($button.data("close-popup")) {
             // remove this manually, because Bootstrap remove this asynchronosly that creates bug with opening next popup
-            $(".modal").remove();
+            $(".modal.fade.in").remove();
             $(".modal-backdrop").remove();
         }
 
