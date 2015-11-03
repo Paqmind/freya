@@ -241,6 +241,13 @@ $(function () {
         // To prevent multisending
         $button.prop('disabled', true);
 
+        // Close popup if needed
+        if ($button.data("close-popup")) {
+            // remove this manually, because Bootstrap remove this asynchronosly that creates bug with opening next popup
+            $(".modal").remove();
+            $(".modal-backdrop").remove();
+        }
+
         Freya.get_popup(url, $button);
     });
 
