@@ -1,11 +1,6 @@
 "use strict";
 
 var Freya = Freya || {};
-Freya.confs = {
-    changeSubmitButtonHTML: true,
-    submitButtonHTMLForAjaxInProcess: '<span class="icon-spinner animate-spin"></span>'
-};
-
 
 // Get real width and height even for hidden element
 Freya.getRealDimensions = function ($el, outer) {
@@ -75,22 +70,6 @@ Freya.sanitize_html = function(value, allowedTags) {
     return value.replace(tags, function($0, $1) {
         return allowedTags.indexOf($1.toLowerCase()) > -1 ? $0 : '';
     });
-};
-
-Freya.disableSubmitBtn = function($btn) {
-    $btn.prop("disabled", true);
-    if(Freya.confs.changeSubmitButtonHTML) {
-        var currentHTML = $btn.html();
-        $btn.html(Freya.confs.submitButtonHTMLForAjaxInProcess);
-        return currentHTML;
-    }
-};
-
-Freya.enableSubmitBtn = function($btn, previousHTML) {
-    $btn.prop("disabled", false);
-    if(Freya.confs.changeSubmitButtonHTML) {
-        $btn.html(previousHTML);
-    }
 };
 
 // Tests for sanitize_html
