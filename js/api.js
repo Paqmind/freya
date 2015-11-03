@@ -47,25 +47,35 @@ $(function () {
             if (data.data_html || data.data_html === '') {
                 var wrapper, $wrapper;
                 var $newData = $(data.data_html);
-                if ($initiator) {
-                    if ($initiator.data('wrapper')) {
-                        $wrapper = $initiator.closest($initiator.data('wrapper'));
-                        if ($wrapper.length) {
-                            if ($initiator.data('wrapper') == '.modal-content') {
-                                $newData = $newData.find('.modal-content');
+                if (data.settings && data.settings['openPopup']) {
+                    var $popup = $newData;
+                    $('body').append($popup);
+                    window.rebind($popup);
+                    $popup.modal('show');
+                    $popup.on('hidden.bs.modal', function (event) {
+                        $popup.remove();
+                    });
+                } else {
+                    if ($initiator) {
+                        if ($initiator.data('wrapper')) {
+                            $wrapper = $initiator.closest($initiator.data('wrapper'));
+                            if ($wrapper.length) {
+                                if ($initiator.data('wrapper') == '.modal-content') {
+                                    $newData = $newData.find('.modal-content');
+                                }
+                            } else {
+                                $wrapper = $($initiator.data("wrapper"));
                             }
-                        } else {
-                            $wrapper = $($initiator.data("wrapper"));
+                        } else if ($initiator.is('form')) {
+                            $wrapper = $initiator.closest('form');
+                        } else if ($initiator.is('button')) {
+                            $wrapper = $initiator.closest('.model-item');
                         }
-                    } else if ($initiator.is('form')) {
-                        $wrapper = $initiator.closest('form');
-                    } else if ($initiator.is('button')) {
-                        $wrapper = $initiator.closest('.model-item');
+                    } else if (data.settings && data.settings['wrapper']) {
+                        $wrapper = $(data.settings['wrapper']);
                     }
-                } else if (data.settings && data.settings['wrapper']) {
-                    $wrapper = $(data.settings['wrapper']);
                 }
-                if ($wrapper.length) {
+                if ($wrapper && $wrapper.length) {
                     $wrapper = $newData.replaceAll($wrapper);
                     window.rebind($wrapper, data.settings);
                 }
@@ -202,8 +212,10 @@ $(function () {
         var $form = $(this).closest('form[data-api="ajax.update"]');
         var formData = $form.serializeArray();
 
+        var $submitBtn = $(this);
+
         // To prevent multisending
-        $(this).prop('disabled', true);
+        $submitBtn.prop('disabled', true);
 
         formData.push({ name: this.name, value: this.value });
         formData.push({ name: 'next', value: document.URL });
@@ -216,7 +228,7 @@ $(function () {
             done_handler(data, textStatus, jqXHR, $form);
         })
         .always(function () {
-            $(this).prop('disabled', false);
+            $submitBtn.prop('disabled', false);
         });
     });
 
