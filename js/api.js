@@ -3,7 +3,7 @@
 var Freya = Freya || {};
 
 Freya.get_popup = function (url, $button) {
-
+    var $alerts = $alerts || $('#alerts');
     // Ability to load popup via ajax url
     $.get(url).done(function (data, textStatus, jqXHR) {
         if (data) {
