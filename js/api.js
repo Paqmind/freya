@@ -2,7 +2,7 @@
 
 var Freya = Freya || {};
 
-Freya.get_popup = function (url, $button) {
+Freya.get_popup = function (url, $button, currentButtonHtml) {
     var $alerts = $alerts || $('#alerts');
     // Ability to load popup via ajax url
     $.get(url).done(function (data, textStatus, jqXHR) {
@@ -23,7 +23,7 @@ Freya.get_popup = function (url, $button) {
     })
     .always(function () {
         if ($button !== undefined ) {
-            $button.prop('disabled', false);
+            Freya.enableSubmitBtn($button, currentButtonHtml);
         }
     });
 };
@@ -100,7 +100,7 @@ $(function () {
         var confirm = $button.attr('data-confirm');
 
         //To prevent multisending
-        $button.prop('disabled', true);
+        var currentButtonHtml = Freya.disableSubmitBtn($button);
 
         function handle() {
             $.ajax({
@@ -112,7 +112,7 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $button);
             })
             .always(function () {
-              $button.prop('disabled', false);
+              Freya.enableSubmitBtn($button, currentButtonHtml);
             });
         }
 
@@ -131,10 +131,10 @@ $(function () {
     $(document.body).on('change', 'form[data-api="ajax.autoreload"] :input', function (event) {
         event.preventDefault();
         var $form = $(this).closest('form');
-        var $submit = $form.find('input[type="submit"]');
+        var $submit = $form.find('button[type="submit"]');
 
         // To prevent multisending
-        $submit.prop('disabled', true);
+        var currentButtonHtml = Freya.disableSubmitBtn($submit);
 
         // Update URL if form.method == GET
         if ($form.attr('method') == 'GET') {
@@ -157,7 +157,7 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $form);
             })
             .always(function () {
-              $submit.prop('disabled', false);
+              Freya.enableSubmitBtn($submit, currentButtonHtml);
             });
         }
 
@@ -173,7 +173,7 @@ $(function () {
 
         //To prevent multisending
         if (!confirm) {
-            $button.prop('disabled', true);
+            var currentButtonHtml = Freya.disableSubmitBtn($button);
         }
 
         function handle() {
@@ -191,7 +191,9 @@ $(function () {
                 done_handler(data, textStatus, jqXHR, $button);
             })
             .always(function () {
-              $button.prop('disabled', false);
+              if(!confirm) {
+                Freya.enableSubmitBtn($button, currentButtonHtml);
+              }
             });
         }
 
@@ -207,15 +209,14 @@ $(function () {
     });
 
     // API for FORM that works by ajax
-    $(document.body).on('click', 'form[data-api="ajax.update"] input[type="submit"]', function (event) {
+    $(document.body).on('click', 'form[data-api="ajax.update"] button[type="submit"]', function (event) {
         event.preventDefault();
         var $form = $(this).closest('form[data-api="ajax.update"]');
         var formData = $form.serializeArray();
-
-        var $submitBtn = $(this);
+        var $button = $(this);
 
         // To prevent multisending
-        $submitBtn.prop('disabled', true);
+        var currentButtonHtml = Freya.disableSubmitBtn($button);
 
         formData.push({ name: this.name, value: this.value });
         formData.push({ name: 'next', value: document.URL });
@@ -228,7 +229,7 @@ $(function () {
             done_handler(data, textStatus, jqXHR, $form);
         })
         .always(function () {
-            $submitBtn.prop('disabled', false);
+            Freya.enableSubmitBtn($button, currentButtonHtml);
         });
     });
 
@@ -239,9 +240,8 @@ $(function () {
         var url = $button.attr('action');
 
         // To prevent multisending
-        $button.prop('disabled', true);
-
-        Freya.get_popup(url, $button);
+        var currentButtonHtml = Freya.disableSubmitBtn($button);
+        Freya.get_popup(url, $button, currentButtonHtml);
     });
 
     // POPUP - FORM
@@ -250,45 +250,65 @@ $(function () {
 
         //To prevent multisending
         var $button = $(this);
-        $button.prop('disabled', true);
+        var currentButtonHtml = Freya.disableSubmitBtn($button);
 
         var $form = $button.closest('form');
         var $popup = $form.closest('.modal[data-api="ajax.popup"]');
         var confirm = Boolean(Number($button.attr('confirm')));
-
-
         var url = $form.attr('action');
-        var formData = $form.serializeArray();
-        formData.push({ name: this.name, value: this.value });
-        formData.push({ name: 'next', value: document.URL });
-        $.post(url, formData).done(function (data, textStatus, jqXHR) {
-            if (data) {
-                if (data.redirect_url) {
-                    if (data.redirect_url == document.URL) {
-                        location.reload();
-                    } else {
-                        window.location.href = data.redirect_url;
-                    }
-                }
-                if (data.settings && data.settings['closePopup']) {
-                    $popup.modal('hide');
-                    done_handler(data, textStatus, jqXHR, null);
-                } else {
-                    if (data.data_html) {
-                        // To make update quicker and to not reinit popup
-                        $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
-                        window.rebind($popup);
-                    }
-                    if (data.flash_html) {
-                        $alerts.append(data.flash_html);
-                    } else if (data.flash_html === '') {
-                        $alerts.html('');
-                    }
-                }
+
+        function handle() {
+            if (LocalStorage.get('conf.csrfToken')) {
+                var setting = { beforeSend: function (xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", LocalStorage.get('conf.csrfToken'))
+                }}
             }
-        })
-        .always(function () {
-          $button.prop('disabled', false);
-        });
+
+            var formData = $form.serializeArray();
+            formData.push({ name: this.name, value: this.value });
+            formData.push({ name: 'next', value: document.URL });
+
+            $.post(url, formData).done(function (data, textStatus, jqXHR) {
+                if (data) {
+                    if (data.redirect_url) {
+                        if (data.redirect_url == document.URL) {
+                            location.reload();
+                        } else {
+                            window.location.href = data.redirect_url;
+                        }
+                    }
+                    if (data.settings && data.settings['closePopup']) {
+                        done_handler(data, textStatus, jqXHR, null);
+                    } else {
+                        if (data.data_html) {
+                            // To make update quicker and to not reinit popup
+                            $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
+                            window.rebind($popup);
+                        }
+                        if (data.flash_html) {
+                            $alerts.append(data.flash_html);
+                        } else if (data.flash_html === '') {
+                            $alerts.html('');
+                        }
+                    }
+                }
+            })
+            .always(function () {
+              Freya.enableSubmitBtn($button, currentButtonHtml);
+            });
+        }
+
+        if (confirm) {
+            $popup.modal('hide');
+            bootbox.confirm(confirm, function (result) {
+                if (result) {
+                    handle();
+                } else {
+                    Freya.enableSubmitBtn($button, currentButtonHtml);
+                }
+            });
+        } else {
+            handle();
+        }
     });
 });
