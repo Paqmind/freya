@@ -278,6 +278,7 @@ $(function () {
                         }
                     }
                     if (data.settings && data.settings['closePopup']) {
+                        if (!confirm) $popup.modal('hide'); // else it was already closed before
                         done_handler(data, textStatus, jqXHR, null);
                     } else {
                         if (data.data_html) {
