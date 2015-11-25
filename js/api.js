@@ -132,6 +132,7 @@ $(function () {
         event.preventDefault();
         var $form = $(this).closest('form');
         var $submit = $form.find('button[type="submit"]');
+        var $method = $form.data('api-method');
 
         // To prevent multisending
         var currentButtonHtml = Freya.disableSubmitBtn($submit);
@@ -149,7 +150,7 @@ $(function () {
 
         function handle() {
             $.ajax({
-                type: $form.attr('method'),
+                type: $form.data('api-action') ? $method : $form.attr('method'),
                 url: $form.data('api-action') || $form.attr('action'),
                 data: formData,
             })
