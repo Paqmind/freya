@@ -1,6 +1,6 @@
 "use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 Freya.confs = {
     changeSubmitButtonHTML: true,
     submitButtonHTMLForAjaxInProcess: '<span class="icon-spinner animate-spin"></span>'

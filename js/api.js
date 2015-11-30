@@ -1,9 +1,9 @@
 "use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 
 Freya.get_popup = function (url, $button, currentButtonHtml) {
-    var $alerts = $alerts || $('#alerts');
+    var $alerts = window.$alerts || $('#alerts');
     // Ability to load popup via ajax url
     $.get(url).done(function (data, textStatus, jqXHR) {
         if (data) {
@@ -30,7 +30,7 @@ Freya.get_popup = function (url, $button, currentButtonHtml) {
 
 $(function () {
 
-    var $alerts = $alerts || $('#alerts');
+    var $alerts = window.$alerts || $('#alerts');
 
     var done_handler = function (data, textStatus, jqXHR, $initiator) {
 
@@ -117,7 +117,7 @@ $(function () {
         }
 
         if (confirm) {
-            bootbox.confirm(confirm, function (result) {
+            window.bootbox.confirm(confirm, function (result) {
                 if (result) {
                     handle();
                 }
@@ -199,7 +199,7 @@ $(function () {
         }
 
         if (confirm) {
-            bootbox.confirm(confirm, function (result) {
+            window.bootbox.confirm(confirm, function (result) {
                 if (result) {
                     handle();
                 }
@@ -219,7 +219,7 @@ $(function () {
         // To prevent multisending
         var currentButtonHtml = Freya.disableSubmitBtn($button);
 
-        formData.push({ name: this.name, value: this.value });
+        formData.push({ name: $button.attr('name'), value: $button.val() });
         formData.push({ name: 'next', value: document.URL });
         $.ajax({
             type: 'post',
@@ -266,7 +266,7 @@ $(function () {
             }
 
             var formData = $form.serializeArray();
-            formData.push({ name: this.name, value: this.value });
+            formData.push({ name: $button.attr('name'), value: $button.val() });
             formData.push({ name: 'next', value: document.URL });
 
             $.post(url, formData).done(function (data, textStatus, jqXHR) {
@@ -302,7 +302,7 @@ $(function () {
 
         if (confirm) {
             $popup.modal('hide');
-            bootbox.confirm(confirm, function (result) {
+            window.bootbox.confirm(confirm, function (result) {
                 if (result) {
                     handle();
                 } else {

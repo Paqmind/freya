@@ -1,6 +1,6 @@
 "use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 
 // TYPE: control text width: no more then 75 cpl
 // http://www.pearsonified.com/2012/01/characters-per-line.php

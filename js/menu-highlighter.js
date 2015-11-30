@@ -1,6 +1,6 @@
 //"use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 
 // MENU (ACTIVATE ITEMS)
 /**
