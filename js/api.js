@@ -2,6 +2,9 @@
 
 window.Freya = window.Freya || {};
 
+Freya.confs = Freya.confs || {};
+Freya.confs.csrfToken = Freya.confs.csrfToken || window.CONFIG.csrfToken;
+
 Freya.get_popup = function (url, $button, currentButtonHtml) {
     var $alerts = window.$alerts || $('#alerts');
     // Ability to load popup via ajax url
@@ -178,9 +181,10 @@ $(function () {
         }
 
         function handle() {
-            if (LocalStorage.get('conf.csrfToken')) {
+
+            if (Freya.confs.csrfToken) {
                 var setting = { beforeSend: function (xhr) {
-                    xhr.setRequestHeader("X-CSRFToken", LocalStorage.get('conf.csrfToken'))
+                    xhr.setRequestHeader("X-CSRFToken", Freya.confs.csrfToken)
                 }}
             }
             $.ajax($.extend(setting, {
@@ -259,9 +263,9 @@ $(function () {
         var url = $form.attr('action');
 
         function handle() {
-            if (LocalStorage.get('conf.csrfToken')) {
+            if (Freya.confs.csrfToken) {
                 var setting = { beforeSend: function (xhr) {
-                    xhr.setRequestHeader("X-CSRFToken", LocalStorage.get('conf.csrfToken'))
+                    xhr.setRequestHeader("X-CSRFToken", Freya.confs.csrfToken)
                 }}
             }
 
