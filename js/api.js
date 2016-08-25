@@ -39,11 +39,7 @@ Freya.get_popup = function (url, $button, currentButtonHtml) {
     });
 };
 
-$(function () {
-
-  var $alerts = window.$alerts || $('#alerts');
-
-  var done_handler = function (data, textStatus, jqXHR, $initiator) {
+var done_handler = function (data, textStatus, jqXHR, $initiator) {
 
     if (data) {
       if (data.redirect_url) {
@@ -115,6 +111,13 @@ $(function () {
     }
   };
 
+Freya.API = {};
+Freya.API.done_handler = done_handler;
+
+$(function () {
+
+  var $alerts = window.$alerts || $('#alerts');
+
   // API for BUTTON that updates content on page (using GET method)
   $(document.body).on('click', 'button[data-api="ajax.get"]', function (event) {
     event.preventDefault();
@@ -162,7 +165,7 @@ $(function () {
 
     // Update URL if form.method == GET
     if ($form.attr('method') == 'GET') {
-      var url = $form.attr('action');
+      var url = $form.data('api-action');
       var path = url.indexOf("?") >= 0 ? url + '&' + $form.serialize() : url + '?' + $form.serialize();
       path += "&" + $submit.attr("name") + "=" + $submit.val();
       window.history.pushState({}, $(document).find("title").text(), path);
@@ -177,12 +180,12 @@ $(function () {
         url: $form.data('api-action') || $form.attr('action'),
         data: formData,
       })
-        .done(function (data, textStatus, jqXHR) {
-          done_handler(data, textStatus, jqXHR, $form);
-        })
-        .always(function () {
-          Freya.enableSubmitBtn($submit, currentButtonHtml);
-        });
+      .done(function (data, textStatus, jqXHR) {
+        done_handler(data, textStatus, jqXHR, $form);
+      })
+      .always(function () {
+        Freya.enableSubmitBtn($submit, currentButtonHtml);
+      });
     }
 
     handle();
