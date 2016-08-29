@@ -94,7 +94,7 @@ Freya.enableSubmitBtn = function($btn, previousHTML) {
 };
 
 Freya.getGETparams = function() {
-  var params = window.location.search.substring(1).split("&");
+  var params = decodeURIComponent(window.location.search.substring(1)).split("&");
   return params.map(function(item) {
     // to support similar keys, for example for multicheckbox elements
     return {"name": item.match(/[^=]*/i)[0], "value": item.match(/=(.*)/i)[1]}
