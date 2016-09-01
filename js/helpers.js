@@ -103,7 +103,7 @@ Freya.getGETparams = function() {
 
 Freya.GETparamsArrayToURL = function(params) {
   return params.map(function(item) {
-    return item.name + "=" + item.value;
+    return item.name + "=" + encodeURIComponent(item.value);
   }).join("&");
 }
 
