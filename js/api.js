@@ -18,6 +18,17 @@ Freya.get_popup = function (url, $button, currentButtonHtml) {
   // Ability to load popup via ajax url
   $.get(url).done(function (data, textStatus, jqXHR) {
     if (data) {
+      if (data.redirect_url) {
+        var redirect_url = Freya.getFullURL(data.redirect_url);
+        if (redirect_url == document.URL) {
+          location.reload();
+          return;
+        } else {
+          window.location.href = redirect_url;
+          return;
+        }
+      }
+
       var $popup = $(data.data_html);
       $('body').append($popup);
       window.rebind($popup);
