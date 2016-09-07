@@ -51,76 +51,77 @@ Freya.get_popup = function (url, $button, currentButtonHtml) {
 };
 
 var done_handler = function (data, textStatus, jqXHR, $initiator) {
+  var $alerts = window.$alerts || $('#alerts');
 
-    if (data) {
-      if (data.redirect_url) {
-        // The difference between `location.reload()` and `window.location.href`
-        // is that if we do window.location.href on the current page, it will set the scroll top position to zero
-        // as with `location.reload()` scroll position will stay as previous
-        // That is why if redirect_url is the same as the current URL, we will use `location.reload()` function
+  if (data) {
+    if (data.redirect_url) {
+      // The difference between `location.reload()` and `window.location.href`
+      // is that if we do window.location.href on the current page, it will set the scroll top position to zero
+      // as with `location.reload()` scroll position will stay as previous
+      // That is why if redirect_url is the same as the current URL, we will use `location.reload()` function
 
-        // Note: data.redirect_url can be in two differect formats:
-        // as absolute URL, including domain, and as path only, without domain
-        // That is why we convert it always to the FULL URL
+      // Note: data.redirect_url can be in two differect formats:
+      // as absolute URL, including domain, and as path only, without domain
+      // That is why we convert it always to the FULL URL
 
-        var redirect_url = Freya.getFullURL(data.redirect_url);
-        if (redirect_url == document.URL) {
-          location.reload();
-          return;
-        } else {
-          window.location.href = redirect_url;
-          return;
-        }
+      var redirect_url = Freya.getFullURL(data.redirect_url);
+      if (redirect_url == document.URL) {
+        location.reload();
+        return;
+      } else {
+        window.location.href = redirect_url;
+        return;
       }
-
-      // new wrapper can be the same as current, or be insede, or be outside
-      if (data.data_html || data.data_html === '') {
-        var wrapper, $wrapper;
-        var $newData = $(data.data_html);
-        if (data.settings && data.settings['openPopup']) {
-          var $popup = $newData;
-          $('body').append($popup);
-          window.rebind($popup);
-          $popup.modal('show');
-          $popup.on('hidden.bs.modal', function (event) {
-            $popup.remove();
-          });
-        } else {
-          if ($initiator) {
-            if ($initiator.data('wrapper')) {
-              $wrapper = $initiator.closest($initiator.data('wrapper'));
-              if ($wrapper.length) {
-                if ($initiator.data('wrapper') == '.modal-content') {
-                  $newData = $newData.find('.modal-content');
-                }
-              } else {
-                $wrapper = $($initiator.data("wrapper"));
-              }
-            } else if ($initiator.is('form')) {
-              $wrapper = $initiator.closest('form');
-            } else if ($initiator.is('button')) {
-              $wrapper = $initiator.closest('.model-item');
-            }
-          } else if (data.settings && data.settings['wrapper']) {
-            $wrapper = $(data.settings['wrapper']);
-          }
-        }
-        if ($wrapper && $wrapper.length) {
-          $wrapper = $newData.replaceAll($wrapper);
-          window.rebind($wrapper, data.settings);
-        }
-      } else if (data.settings) {
-        window.rebind($('body'), data.settings);
-      }
-
-      if (data.flash_html) {
-        $alerts.html(data.flash_html);
-      }
-
-    } else {
-      console.log('Data from ajax request is empty')
     }
-  };
+
+    // new wrapper can be the same as current, or be insede, or be outside
+    if (data.data_html || data.data_html === '') {
+      var wrapper, $wrapper;
+      var $newData = $(data.data_html);
+      if (data.settings && data.settings['openPopup']) {
+        var $popup = $newData;
+        $('body').append($popup);
+        window.rebind($popup);
+        $popup.modal('show');
+        $popup.on('hidden.bs.modal', function (event) {
+          $popup.remove();
+        });
+      } else {
+        if ($initiator) {
+          if ($initiator.data('wrapper')) {
+            $wrapper = $initiator.closest($initiator.data('wrapper'));
+            if ($wrapper.length) {
+              if ($initiator.data('wrapper') == '.modal-content') {
+                $newData = $newData.find('.modal-content');
+              }
+            } else {
+              $wrapper = $($initiator.data("wrapper"));
+            }
+          } else if ($initiator.is('form')) {
+            $wrapper = $initiator.closest('form');
+          } else if ($initiator.is('button')) {
+            $wrapper = $initiator.closest('.model-item');
+          }
+        } else if (data.settings && data.settings['wrapper']) {
+          $wrapper = $(data.settings['wrapper']);
+        }
+      }
+      if ($wrapper && $wrapper.length) {
+        $wrapper = $newData.replaceAll($wrapper);
+        window.rebind($wrapper, data.settings);
+      }
+    } else if (data.settings) {
+      window.rebind($('body'), data.settings);
+    }
+
+    if (data.flash_html) {
+      $alerts.html(data.flash_html);
+    }
+
+  } else {
+    console.log('Data from ajax request is empty')
+  }
+};
 
 Freya.API = {};
 Freya.API.done_handler = done_handler;
