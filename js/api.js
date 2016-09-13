@@ -332,7 +332,10 @@ $(function () {
             if (data.data_html) {
               // To make update quicker and to not reinit popup
               $popup.find('.modal-body').replaceWith($(data.data_html).find('.modal-body'));
-              window.rebind($popup);
+              $popup.attr('id', $(data.data_html).attr('id'));
+              $popup.attr('aria-labelledby', $(data.data_html).attr('aria-labelledby'));
+
+              window.rebind($popup, {popupContentIsUpdated: true});
             }
             if (data.flash_html) {
               $alerts.append(data.flash_html);
