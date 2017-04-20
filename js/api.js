@@ -136,7 +136,8 @@ $(function () {
     var $button = $(this);
     var url = $button.attr('action');
     var confirm = $button.attr('data-confirm');
-
+    var $popup = $button.closest('.modal[data-api="ajax.popup"]');
+      
     //To prevent multisending
     var currentButtonHtml = Freya.disableSubmitBtn($button);
 
@@ -147,7 +148,12 @@ $(function () {
                 data: {'value': $button.val(), 'next': document.URL}
       })
         .done(function (data, textStatus, jqXHR) {
-          done_handler(data, textStatus, jqXHR, $button);
+              if (data.settings && data.settings['closePopup'] && $popup) {
+                  $popup.modal('hide');
+                  done_handler(data, textStatus, jqXHR, null);
+              } else {
+                  done_handler(data, textStatus, jqXHR, $button);
+              }
         })
         .always(function () {
           Freya.enableSubmitBtn($button, currentButtonHtml);
