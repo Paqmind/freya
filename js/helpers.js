@@ -1,6 +1,11 @@
 "use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
+Freya.confs = {
+    changeSubmitButtonHTML: true,
+    submitButtonHTMLForAjaxInProcess: '<span class="icon-spinner animate-spin"></span>'
+};
+
 
 // Get real width and height even for hidden element
 Freya.getRealDimensions = function ($el, outer) {
@@ -71,6 +76,38 @@ Freya.sanitize_html = function(value, allowedTags) {
         return allowedTags.indexOf($1.toLowerCase()) > -1 ? $0 : '';
     });
 };
+
+Freya.disableSubmitBtn = function($btn) {
+    $btn.prop("disabled", true);
+    if(Freya.confs.changeSubmitButtonHTML) {
+        var currentHTML = $btn.html();
+        $btn.html(Freya.confs.submitButtonHTMLForAjaxInProcess);
+        return currentHTML;
+    }
+};
+
+Freya.enableSubmitBtn = function($btn, previousHTML) {
+    $btn.prop("disabled", false);
+    if(Freya.confs.changeSubmitButtonHTML) {
+        $btn.html(previousHTML);
+    }
+};
+
+Freya.getGETparams = function() {
+  if (!window.location.search) return [];  
+  var params = decodeURIComponent(window.location.search.substring(1).replace(/\+/g, '%20')).split("&");
+  return params.map(function(item) {
+    // to support similar keys, for example for multicheckbox elements
+    return {"name": item.match(/[^=]*/i)[0], "value": item.match(/=(.*)/i)[1]}
+  });
+};
+
+Freya.GETparamsArrayToURL = function(params) {
+  return params.map(function(item) {
+    return item.name + "=" + encodeURIComponent(item.value);
+  }).join("&");
+};
+
 
 // Tests for sanitize_html
 //var str, newstr;

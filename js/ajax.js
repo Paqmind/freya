@@ -1,6 +1,6 @@
 "use strict";
 
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 
 $(function () {
   // Tests: https://github.com/scabbiaza/ajax-errors-handler
@@ -13,7 +13,7 @@ $(function () {
       else if (jqXHR.status === 0)        message += "No connection.";
       else if (jqXHR.status)              message += "HTTP Error " + jqXHR.status + " – " + jqXHR.statusText + ".";
       else                                message += "Unknown error.";
-      alert(message);
+      //alert(message);
     });
   });
 });

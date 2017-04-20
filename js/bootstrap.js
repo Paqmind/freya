@@ -1,7 +1,7 @@
 "use strict";
 
 // GLOBALS -----------------------------------------------------------------------------------------
-var Freya = Freya || {};
+window.Freya = window.Freya || {};
 
 window.pageHandlers = window.pageHandlers || [];
 
