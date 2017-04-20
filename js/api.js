@@ -5,12 +5,12 @@ window.Freya = window.Freya || {};
 Freya.confs = Freya.confs || {};
 Freya.confs.csrfToken = Freya.confs.csrfToken || window.CONFIG.csrfToken;
 
-Freya.getFullURL = function(url) {
+Freya.getFullURL = function (url) {
   return url.indexOf(window.location.hostname) > -1
-         ? url
-         : window.location.protocol + "//" + window.location.hostname +
-           (window.location.port ? ":" : "") + window.location.port +
-           (url[0] != "/" ? "/" : "") + url;
+    ? url
+    : window.location.protocol + "//" + window.location.hostname +
+  (window.location.port ? ":" : "") + window.location.port +
+  (url[0] != "/" ? "/" : "") + url;
 }
 
 Freya.get_popup = function (url, $button, currentButtonHtml) {
@@ -136,6 +136,7 @@ $(function () {
     var $button = $(this);
     var url = $button.attr('action');
     var confirm = $button.attr('data-confirm');
+    var $popup = $button.closest('.modal[data-api="ajax.popup"]');
 
     //To prevent multisending
     var currentButtonHtml = Freya.disableSubmitBtn($button);
@@ -144,14 +145,19 @@ $(function () {
       $.ajax({
         type: 'get',
         url: url,
-                data: {'value': $button.val(), 'next': document.URL}
+        data: {'value': $button.val(), 'next': document.URL}
       })
-        .done(function (data, textStatus, jqXHR) {
+      .done(function (data, textStatus, jqXHR) {
+        if (data.settings && data.settings['closePopup'] && $popup) {
+          $popup.modal('hide');
+          done_handler(data, textStatus, jqXHR, null);
+        } else {
           done_handler(data, textStatus, jqXHR, $button);
-        })
-        .always(function () {
-          Freya.enableSubmitBtn($button, currentButtonHtml);
-        });
+        }
+      })
+      .always(function () {
+        Freya.enableSubmitBtn($button, currentButtonHtml);
+      });
     }
 
     if (confirm) {
@@ -192,12 +198,12 @@ $(function () {
         url: $form.data('api-action') || $form.attr('action'),
         data: formData,
       })
-      .done(function (data, textStatus, jqXHR) {
-        done_handler(data, textStatus, jqXHR, $form);
-      })
-      .always(function () {
-        Freya.enableSubmitBtn($submit, currentButtonHtml);
-      });
+        .done(function (data, textStatus, jqXHR) {
+          done_handler(data, textStatus, jqXHR, $form);
+        })
+        .always(function () {
+          Freya.enableSubmitBtn($submit, currentButtonHtml);
+        });
     }
 
     handle();
@@ -227,7 +233,7 @@ $(function () {
       $.ajax($.extend(setting, {
         type: 'post',
         url: url,
-                data: {'value': $button.val(), 'next': document.URL}
+        data: {'value': $button.val(), 'next': document.URL}
       }))
         .done(function (data, textStatus, jqXHR) {
           done_handler(data, textStatus, jqXHR, $button);
