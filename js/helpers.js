@@ -94,18 +94,19 @@ Freya.enableSubmitBtn = function($btn, previousHTML) {
 };
 
 Freya.getGETparams = function() {
+  if (!window.location.search) return [];  
   var params = decodeURIComponent(window.location.search.substring(1).replace(/\+/g, '%20')).split("&");
   return params.map(function(item) {
     // to support similar keys, for example for multicheckbox elements
     return {"name": item.match(/[^=]*/i)[0], "value": item.match(/=(.*)/i)[1]}
   });
-}
+};
 
 Freya.GETparamsArrayToURL = function(params) {
   return params.map(function(item) {
     return item.name + "=" + encodeURIComponent(item.value);
   }).join("&");
-}
+};
 
 
 // Tests for sanitize_html
