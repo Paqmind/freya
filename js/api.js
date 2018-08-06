@@ -118,6 +118,10 @@ var done_handler = function (data, textStatus, jqXHR, $initiator) {
       $alerts.html(data.flash_html);
     }
 
+    if (data.settings && data.settings.callback) {
+      eval(data.settings.callback)
+    }
+
   } else {
     console.log('Data from ajax request is empty')
   }
